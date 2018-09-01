@@ -3,15 +3,15 @@ game
 
 This project implements the game of Breakout.
 
-Name: 
+Name: Vincent Liu
 
 ### Timeline
 
-Start Date: 
+Start Date: 9.1.2018
 
 Finish Date: 
 
-Hours Spent:
+Hours Spent: 2 + 
 
 ### Resources Used
 
