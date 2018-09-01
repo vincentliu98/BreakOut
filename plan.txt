@@ -4,13 +4,12 @@ Pinball Breakout. It's interesting that the creators combined pinball and breako
 
 2. Levels
 
-    1st Level: 4 rows * 10 columns; bouncer has slow speed; each row has different colors; paddle can catch the ball
-    2nd Level: 5 rows * 10 columns; bouncer has normal speed; each row has different colors; paddle can catch the ball
-    3rd Level: 6 rows * 10 columns; bouncer has fast speed; each row has different colors; paddle can catch the ball
-    4th Level: 4 rows * 10 columns; bouncer has slow speed; each row has different colors
-    5th Level: 5 rows * 10 columns; bouncer has normal speed; each row has different colors
-    6th Level: 6 rows * 10 columns; bouncer has fast speed; each row has different colors
-
+    1st Level: 4 rows * 6 columns; bouncer has slow speed; each row has different bricks; paddle can catch the ball
+    2nd Level: 5 rows * 6 columns; bouncer has normal speed; each row has different bricks; paddle can catch the ball
+    3rd Level: 6 rows * 6 columns; bouncer has fast speed; each row has different bricks; paddle can catch the ball
+    4th Level: 4 rows * 6 columns; bouncer has slow speed; each row has different bricks
+    5th Level: 5 rows * 6 columns; bouncer has normal speed; each row has different bricks
+    6th Level: 6 rows * 6 columns; bouncer has fast speed; each row has different bricks
 
 3. Blocks
 
@@ -33,7 +32,7 @@ Pinball Breakout. It's interesting that the creators combined pinball and breako
 
 6. Status display
 
-    Level: ?/9, Lives ?/3, Scores **
+    Level: ?/6, Lives ?/3, Scores **
 
 7. Splash screen
 
