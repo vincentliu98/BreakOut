@@ -1,0 +1,56 @@
+1. at least one variant of Breakout that you thought was interesting and what was interesting about it
+
+Pinball Breakout. It's interesting that the creators combined pinball and breakout. The acceleration effect and the collision effect were great. The creators also added the a fading trace for the bouncer, which creates a better user experience.
+
+2. Levels
+
+    1st Level: 4 rows * 10 columns; bouncer has slow speed; each row has different colors; paddle can catch the ball
+    2nd Level: 5 rows * 10 columns; bouncer has normal speed; each row has different colors; paddle can catch the ball
+    3rd Level: 6 rows * 10 columns; bouncer has fast speed; each row has different colors; paddle can catch the ball
+    4th Level: 4 rows * 10 columns; bouncer has slow speed; each row has different colors
+    5th Level: 5 rows * 10 columns; bouncer has normal speed; each row has different colors
+    6th Level: 6 rows * 10 columns; bouncer has fast speed; each row has different colors
+
+
+3. Blocks
+
+    (three types of blocks have different colors)
+    1. Hard Block (1 point; goes away after 3 hits)
+    2. Medium Block (1 point; goes away after 2 hits)
+    3. Soft Block (1 point; goes away after 1 hit; certain probability of dropping power-ups)
+
+4. Paddle
+
+    1. Left/right quarter: bounce to where the ball come from. Middle half: bounce normally (press cheat key "N" to disable)
+    2. Catch the ball (for the first 3 levels. disabled for the next 3 levels)
+    3. Can move across left and right edge of the screen
+
+5. Power-ups
+
+    1. Paddle Magnifier (only magnify by a little bit)
+    2. Bouncer Magnifier (only magnify by a little bit)
+    3. Bouncer Replicator (make one bouncer into three)
+
+6. Status display
+
+    Level: ?/9, Lives ?/3, Scores **
+
+7. Splash screen
+
+    A welcome page explaining the rules.
+
+8. Summary page
+
+    When the player win/fail, show a summary page and ask to user to restart. It's substantial because it keeps the player wanting to play more.
+
+9. Cheat keys
+
+    1. press "L" increases the number of lives
+    2. press "E" enlarges the ball
+    3. press "1/2/3/4/5/6" to jump to the certain level
+    4. press "R" to restart the ball and the paddle
+    5. press "N" to make the whole paddle bounce normally
+
+10. something extra you intend to add and why you think it is a substantial addition
+
+    Knife falling from the top. It is substantial because it makes the game harder. Once the knife hits the paddle, the player will lose one life.
