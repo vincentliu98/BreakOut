@@ -14,11 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
-/**
- * A basic example JavaFX program for the first lab.
- *
- * @author Robert C. Duvall
- */
 public class Main extends Application {
     public static final String TITLE = "Vincent's BreakOut";
     public static final int SIZE = 700;
@@ -27,15 +22,23 @@ public class Main extends Application {
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
     public static final Paint BACKGROUND = Color.WHITE;
     public static final String BOUNCER_IMAGE = "ball.gif";
-    public static final String BRICK_IMAGE = "brick1.gif";
+    public static final String BRICK_IMAGE1 = "brick1.gif";
+    public static final String BRICK_IMAGE2 = "brick2.gif";
+    public static final String BRICK_IMAGE3 = "brick3.gif";
+    public static final String BRICK_IMAGE4 = "brick4.gif";
+    public static final String BRICK_IMAGE5 = "brick5.gif";
+    public static final String BRICK_IMAGE6 = "brick6.gif";
+    public static final String BRICK_IMAGE7 = "brick7.gif";
+    public static final String BRICK_IMAGE8 = "brick8.gif";
+    public static final String BRICK_IMAGE9 = "brick9.gif";
     public static final String PADDLE_IMAGE = "paddle.gif";
     public static final int MOVER_SPEED = 20;
     public static final int BRICKS_COLUMN = 6;
-    public static int BRICKS_ROW = 5;
-    public ImageView[][] myBrick = new ImageView[BRICKS_ROW][BRICKS_COLUMN];
 
-
-    // some things we need to remember during our game
+    public int BRICKS_ROW = 0;
+    public int GAME_LIFE = 3;
+    public int GAME_LEVEL = 2;
+    public ImageView[][] myBrick = null;
     private Scene myScene;
     private ImageView myPaddle;
     private Bouncer myBouncer;
@@ -67,14 +70,30 @@ public class Main extends Application {
         var ball_image = new Image(this.getClass().getClassLoader().getResourceAsStream(BOUNCER_IMAGE));
         var paddle_image = new Image(this.getClass().getClassLoader().getResourceAsStream(PADDLE_IMAGE));
 
-        // create bricks
-        var brick_image = new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE));
-//       70 System.out.println(brick_image.getWidth());
-//       20 System.out.println(brick_image.getHeight());
-
+        // construct bricks
+        switch(GAME_LEVEL) {
+            case 1: BRICKS_ROW = 5; break;
+            case 2: BRICKS_ROW = 6; break;
+            case 3: BRICKS_ROW = 7; break;
+        }
+        myBrick = new ImageView[BRICKS_ROW][BRICKS_COLUMN];
         for (int i = 0; i < BRICKS_ROW; i++) {
             for (int j = 0; j < BRICKS_COLUMN; j++) {
+                Image brick_image = null;
+                // set different rows to different bricks
+                switch(i) {
+                    case 0: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE1)); break;
+                    case 1: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE2)); break;
+                    case 2: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE3)); break;
+                    case 3: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE4)); break;
+                    case 4: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE5)); break;
+                    case 5: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE6)); break;
+                    case 6: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE7)); break;
+                    case 7: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE8)); break;
+                    case 8: brick_image=new Image(this.getClass().getClassLoader().getResourceAsStream(BRICK_IMAGE9)); break;
+                }
                 myBrick[i][j] = new ImageView(brick_image);
+                // brick image has width 70, height 20
                 myBrick[i][j].setX(j*brick_image.getWidth()+50*j+20);
                 myBrick[i][j].setY(i*brick_image.getHeight()+50*i+20);
                 root.getChildren().add(myBrick[i][j]);
@@ -83,11 +102,10 @@ public class Main extends Application {
 
         // add bouncer and paddle
         myBouncer = new Bouncer(ball_image, width, height);
-        System.out.println(myBouncer.getView().getBoundsInLocal());
         myPaddle = new ImageView(paddle_image);
         // position the elements
         myPaddle.setX(width/2 - myPaddle.getLayoutX());
-        myPaddle.setY(height - myPaddle.getLayoutY() - 10);
+        myPaddle.setY(height - myPaddle.getLayoutY() - 20);
         myPaddle.setScaleX(2);myPaddle.setScaleY(2);
 
         // add ball, brick, and paddle
@@ -114,17 +132,66 @@ public class Main extends Application {
         for (int i = 0; i < BRICKS_ROW; i++) {
             for (int j = 0; j < BRICKS_COLUMN; j++) {
                 if (myBouncer.getView().getBoundsInLocal().intersects(myBrick[i][j].getBoundsInLocal())) {
-                    // if x intersects, change y speed
-                    if (Math.abs(myBouncer.getView().getLayoutX() - myBrick[i][j].getX()) >= 0 ||
-                            myBouncer.getView().getBoundsInLocal().getMinX() <= myBrick[i][j].getBoundsInLocal().getMaxX()) {
+                    // from below
+                    //myBrick[i][j].getLayoutBounds().getHeight()/2
+                    if (myBouncer.myBouncerY <= myBrick[i][j].getY() + myBrick[i][j].getLayoutBounds().getHeight()) {
                         myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+                        System.out.print("Brick : " + myBrick[i][j].getY());
+                        System.out.print("Bouncer : " + myBouncer.myBouncerY);
+                        System.out.println("reversed Y");
                     }
-                    if (myBouncer.getView().getBoundsInLocal().getMaxY() >= myBrick[i][j].getBoundsInLocal().getMinY() ||
-                            myBouncer.getView().getBoundsInLocal().getMinY() <= myBrick[i][j].getBoundsInLocal().getMaxY()) {
-                        // if y intersects, change x speed
+                    // from above
+                    else if (myBouncer.myBouncerY >= myBrick[i][j].getY() - myBrick[i][j].getLayoutBounds().getHeight()) {
+                        myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+                        System.out.print("Brick : " + myBrick[i][j].getY());
+                        System.out.print("Bouncer : " + myBouncer.myBouncerY);
+                        System.out.println("reversed Y");                    }
+                    // from left
+                    else if (myBouncer.myBouncerX < myBrick[i][j].getLayoutX()) {
                         myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), myBouncer.myVelocity.getY());
+                        System.out.println("reversed X");
+                    }
+                    // from right
+                    else if (myBouncer.myBouncerX > myBrick[i][j].getLayoutX()) {
+                        myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), myBouncer.myVelocity.getY());
+                        System.out.println("reversed X");
                     }
                 }
+
+//                if (myBouncer.getView().getBoundsInLocal().intersects(myBrick[i][j].getLayoutBounds())) {
+//                    // center is between x
+//                    if (myBouncer.getView().getBoundsInLocal().getMaxX() + myBouncer.getView().getBoundsInLocal().getMinX()
+//                            <= 2 * myBrick[i][j].getBoundsInLocal().getMaxX() && myBouncer.getView().getBoundsInLocal().getMaxX() + myBouncer.getView().getBoundsInLocal().getMinX()
+//                            >= 2 * myBrick[i][j].getBoundsInLocal().getMinX()) {
+//                        myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), myBouncer.myVelocity.getY());
+//                        System.out.println("reverse X");
+//                    } else if (myBouncer.getView().getBoundsInLocal().getMaxY() + myBouncer.getView().getBoundsInLocal().getMinY()
+//                            <= 2 * myBrick[i][j].getBoundsInLocal().getMaxY() && myBouncer.getView().getBoundsInLocal().getMaxY() + myBouncer.getView().getBoundsInLocal().getMinY()
+//                            >= 2 * myBrick[i][j].getBoundsInLocal().getMinY()) {
+//                        myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+//                        System.out.println("reverse Y");
+//                    }
+//                }
+//                    // Hit from top
+//                    if (myBouncer.getView().getBoundsInLocal().getMaxY() >=  myBrick[i][j].getBoundsInLocal().getMinY()) {
+//                        myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+//                        System.out.println("reverse Y");
+//                    }
+//                    // Hit from bottom
+//                    else if (myBouncer.getView().getBoundsInLocal().getMinY() <=  myBrick[i][j].getBoundsInLocal().getMaxY()) {
+//                        myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+//                        System.out.println("reverse Y");
+//                    }
+//                    // Hit from left
+//                    else if (myBouncer.getView().getBoundsInLocal().getMaxX() >=  myBrick[i][j].getBoundsInLocal().getMinX()) {
+//                        myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), myBouncer.myVelocity.getY());
+//                        System.out.println("reverse X");
+//                    }
+//                    // Hit from right
+//                    else if (myBouncer.getView().getBoundsInLocal().getMinX() <=  myBrick[i][j].getBoundsInLocal().getMaxX()) {
+//                        myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), myBouncer.myVelocity.getY());
+//                        System.out.println("reverse X");
+//                    }
             }
         }
     }
@@ -138,6 +205,7 @@ public class Main extends Application {
             myPaddle.setX(myPaddle.getX() + MOVER_SPEED);
         }
     }
+
 
     /**
      * Start the program.

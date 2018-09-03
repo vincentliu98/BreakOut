@@ -7,7 +7,9 @@ import javafx.scene.Node;
 
 public class Bouncer {
     public static final int BOUNCER_SPEED = 100;
-    public static final double BOUNCER_SCALE = 1.5;
+    public static final double BOUNCER_SCALE = 1;
+    public double myBouncerX;
+    public double myBouncerY;
 
     public ImageView myBouncer;
     public Point2D myVelocity;
@@ -29,8 +31,10 @@ public class Bouncer {
 
     // make the ball move
     public void move(double elapsedTime) {
-        myBouncer.setX(myBouncer.getX() + myVelocity.getX() * elapsedTime);
-        myBouncer.setY(myBouncer.getY() + myVelocity.getY() * elapsedTime);
+        myBouncerX = myBouncer.getX() + myVelocity.getX() * elapsedTime;
+        myBouncerY = myBouncer.getY() + myVelocity.getY() * elapsedTime;
+        myBouncer.setX(myBouncerX);
+        myBouncer.setY(myBouncerY);
     }
 
     // make the ball bounce off the screen
