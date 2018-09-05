@@ -11,7 +11,7 @@ Start Date: 9.1.2018
 
 Finish Date: 
 
-Hours Spent: 2 + 2.5
+Hours Spent: 2 + 2.5 + 3 + 2.5
 
 ### Resources Used
 

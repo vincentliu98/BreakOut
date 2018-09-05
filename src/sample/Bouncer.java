@@ -1,7 +1,6 @@
 package sample;
 
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Node;
