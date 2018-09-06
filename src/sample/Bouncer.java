@@ -20,13 +20,13 @@ public class Bouncer {
 
     // constructor
     // x and y are the width and height of the canvas
-    public Bouncer (Image image, int x, int y, Main context) {
+    public Bouncer(Image image, int x, int y, Main context) {
         myBouncer = new ImageView(image);
         myBouncerWidth = myBouncer.getBoundsInParent().getWidth();
         myBouncerHeight = myBouncer.getBoundsInParent().getHeight();
         // make sure it stays within the bounds
-        myBouncer.setX(x/3);
-        myBouncer.setY(y/2);
+        myBouncer.setX(x / 3);
+        myBouncer.setY(y / 2);
         myBouncer.setScaleX(BOUNCER_SCALE);
         myBouncer.setScaleY(BOUNCER_SCALE);
 
@@ -43,16 +43,15 @@ public class Bouncer {
             myBouncerY = myBouncer.getY() + myVelocity.getY() * elapsedTime;
             myBouncer.setX(myBouncerX);
             myBouncer.setY(myBouncerY);
-        }
-        else {
+        } else {
             // need to repair the 20
-            myBouncer.setX(context.myPaddle.getX() + context.myPaddle.getBoundsInParent().getWidth()/2 - myBouncerWidth/2);
+            myBouncer.setX(context.myPaddle.getX() + context.myPaddle.getBoundsInParent().getWidth() / 2 - myBouncerWidth / 2);
             myBouncer.setY(context.myPaddle.getY() - myBouncerHeight);
         }
     }
 
     // make the ball bounce off the screen
-    public void bounceWall (double screenWidth) {
+    public void bounceWall(double screenWidth) {
         // collide with horizontal direction
         if (myBouncer.getX() < 0 || myBouncer.getX() > screenWidth - myBouncer.getBoundsInLocal().getWidth()) {
             myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
@@ -66,7 +65,7 @@ public class Bouncer {
     }
 
     // Returns internal view of bouncer to interact with other JavaFX methods.
-    public Node getView () {
+    public Node getView() {
         return myBouncer;
     }
 

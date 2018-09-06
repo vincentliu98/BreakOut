@@ -46,7 +46,7 @@ public class Welcome extends Application {
         // add bouncer and paddle
         Text pressEnter = new Text() {{
             setTranslateX(30);
-            setTranslateY(height/2);
+            setTranslateY(height / 2);
             setFill(Color.WHITE);
             setFont(Font.font(80));
             setText("BreakOut \nVincent Liu");
@@ -54,7 +54,7 @@ public class Welcome extends Application {
 
         Text Toplay = new Text() {{
             setTranslateX(30);
-            setTranslateY(height-30);
+            setTranslateY(height - 30);
             setFill(Color.WHITE);
             setFont(Font.font(20));
             setText("Press Enter to play");
@@ -69,7 +69,7 @@ public class Welcome extends Application {
 
     }
 
-        public static void main (String[] args) {
+    public static void main(String[] args) {
         launch(args);
     }
 }
