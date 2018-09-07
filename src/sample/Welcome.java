@@ -53,17 +53,20 @@ public class Welcome extends Application {
         }};
 
         Text Toplay = new Text() {{
-            setTranslateX(30);
-            setTranslateY(height - 30);
+            setTranslateX(width / 3 * 2);
+            setTranslateY(height * 9 / 10);
             setFill(Color.WHITE);
             setFont(Font.font(20));
             setText("Press Enter to play");
         }};
-        ImageView image = new ImageView(new Image(this.getClass().getClassLoader().getResourceAsStream(BOUNCER_IMAGE)));
+        //https://www.breakoutedu.com/how-it-worksold/
+        ImageView image = new ImageView(new Image(this.getClass().getClassLoader().getResourceAsStream("Welcome_background.jpg")));
         image.setX(0);
         image.setY(0);
-        root.getChildren().add(pressEnter);
+        image.setFitWidth(SIZE);
+        image.setFitHeight(SIZE);
         root.getChildren().add(image);
+        root.getChildren().add(pressEnter);
         root.getChildren().add(Toplay);
         return scene;
 

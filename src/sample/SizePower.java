@@ -36,19 +36,11 @@ public class SizePower {
 
     // hit paddle, produce effect
     public void hitPaddle(double myPaddleX, int screenWidth) {
-        // need to fix the 20 & 80 part. it is the height of the paddle
-        if (myPowerY >= screenWidth - 31 && myPaddleX <= myPower.getX() && myPaddleX + 80 >= myPower.getX()) {
-            System.out.print("Hit");
-            System.out.println(myPower.getX());
-            System.out.println(myPaddleX);
-            System.out.println(myPowerY);
-
+        if (myPowerY + myPower.getBoundsInParent().getHeight() >= screenWidth - context.PADDLE_HEIGHT && myPaddleX <= myPower.getX() && myPaddleX + context.PADDLE_WIDTH >= myPower.getX()) {
             myPower.setY(-100);
             myPower.setX(-100);
-
-            context.myPaddle.setHeight(context.paddle_height * 1.5);
-            context.myPaddle.setWidth(context.paddle_width * 1.5);
-
+            context.myPaddle.setHeight(context.PADDLE_HEIGHT * 1.5);
+            context.myPaddle.setWidth(context.PADDLE_WIDTH * 1.5);
             hit = true;
         }
     }

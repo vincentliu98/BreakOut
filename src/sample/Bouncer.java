@@ -4,34 +4,32 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Node;
+import javafx.stage.Stage;
 
 public class Bouncer {
-    public static final int BOUNCER_SPEED = -150;
-    public static final double BOUNCER_SCALE = 1;
     public double myBouncerX;
     public double myBouncerY;
     public double myBouncerWidth;
     public double myBouncerHeight;
+    private int BOUNCER_SPEED;
 
     public ImageView myBouncer;
     public Point2D myVelocity;
 
-    private Main context;
+    public Main context;
 
     // constructor
     // x and y are the width and height of the canvas
-    public Bouncer(Image image, int x, int y, Main context) {
+    public Bouncer(Image image, int speed, double scale, Main context) {
+        this.context = context;
+
         myBouncer = new ImageView(image);
         myBouncerWidth = myBouncer.getBoundsInParent().getWidth();
         myBouncerHeight = myBouncer.getBoundsInParent().getHeight();
         // make sure it stays within the bounds
-        myBouncer.setX(x / 3);
-        myBouncer.setY(y / 2);
-        myBouncer.setScaleX(BOUNCER_SCALE);
-        myBouncer.setScaleY(BOUNCER_SCALE);
-
-        this.context = context;
-
+        myBouncer.setScaleX(scale);
+        myBouncer.setScaleY(scale);
+        BOUNCER_SPEED = speed;
         // turn speed into velocity that can be updated on bounces
         myVelocity = new Point2D(BOUNCER_SPEED, BOUNCER_SPEED);
     }
@@ -51,16 +49,22 @@ public class Bouncer {
     }
 
     // make the ball bounce off the screen
-    public void bounceWall(double screenWidth) {
+    public void bounceWall(double screenWidth, Stage stage) {
         // collide with horizontal direction
         if (myBouncer.getX() < 0 || myBouncer.getX() > screenWidth - myBouncer.getBoundsInLocal().getWidth()) {
             myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
             context.setRecentlyHit(false);
         }
         // collide with upper part
-        if (myBouncer.getY() < 0) {
+        else if (myBouncer.getY() < 0) {
             myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
             context.setRecentlyHit(false);
+        } else if (myBouncer.getY() >= screenWidth) {
+            context.current_life--;
+            // reset the ball
+            context.launch = 0;
+            context.animation.stop();
+            context.start(stage);
         }
     }
 
