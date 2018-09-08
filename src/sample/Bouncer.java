@@ -36,15 +36,14 @@ public class Bouncer {
 
     // make the ball move
     public void move(double elapsedTime) {
-        if (context.launch == 1) {
+        if (context.launch == true) {
             myBouncerX = myBouncer.getX() + myVelocity.getX() * elapsedTime;
             myBouncerY = myBouncer.getY() + myVelocity.getY() * elapsedTime;
             myBouncer.setX(myBouncerX);
             myBouncer.setY(myBouncerY);
         } else {
-            // need to repair the 20
             myBouncer.setX(context.myPaddle.getX() + context.myPaddle.getBoundsInParent().getWidth() / 2 - myBouncerWidth / 2);
-            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight);
+            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight -5);
         }
     }
 
@@ -62,9 +61,9 @@ public class Bouncer {
         } else if (myBouncer.getY() >= screenWidth) {
             context.current_life--;
             // reset the ball
-            context.launch = 0;
-            context.animation.stop();
-            context.start(stage);
+            context.launch = false;
+            myBouncer.setX(context.myPaddle.getX() + context.myPaddle.getBoundsInParent().getWidth() / 2 - myBouncerWidth / 2);
+            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight -5);
         }
     }
 

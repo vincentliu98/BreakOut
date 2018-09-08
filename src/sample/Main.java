@@ -3,6 +3,7 @@ package sample;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -30,8 +31,8 @@ public class Main extends Application {
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
     public static final int MOVER_SPEED = 80;
     public static final int BRICKS_COLUMN = 8;
-    public static final int GAME_LIFE = 3;
-    public static final int GAME_LEVEL = 3;
+    public static final int GAME_LIFE = 500;
+    public static final int GAME_LEVEL = 6;
     public static final String TITLE = "Vincent's BreakOut";
     public static final String LEVEL_1 = "level_1.txt";
     public static final String LEVEL_2 = "level_2.txt";
@@ -40,6 +41,10 @@ public class Main extends Application {
     public static final String BOUNCER_IMAGE = "ball.gif";
     public static final String SIZE_IMAGE = "sizepower.gif";
     public static final String EXTRAPOWER_IMAGE = "extraballpower.gif";
+    public static final String POINTS_IMAGE = "pointspower.gif";
+    public static final String GAME_BACKGROUND = "game_background.jpg";
+
+
 
     public static final double PADDLE_WIDTH = 80;
     public static final double PADDLE_HEIGHT = 20;
@@ -47,10 +52,13 @@ public class Main extends Application {
     public double size_timelimit = 8.0;
     public ArrayList<SizePower> sizePower;
     public ArrayList<ExtraBallPower> extraBallPower;
-    public int current_life = 3;
+    public ArrayList<PointsPower> pointsPower;
+    public int current_life = 500;
     public int current_level = 1;
     public int current_score = 0;
     public double myPaddleX;
+    public boolean isWon = false;
+    public boolean bounceWeird = true;
     public ArrayList<Rectangle> bricks;
     public ArrayList<Integer> bricksLife;
     public int BRICKS_NUM = 0;
@@ -60,19 +68,20 @@ public class Main extends Application {
     private Scene myScene;
     public Timeline animation;
     public Rectangle myPaddle;
-    private Bouncer myBouncer;
-    public int launch = 0;
+    public Bouncer myBouncer;
+    public boolean launch = false;
     public Group root;
     public Text life;
     public Text level;
     public Text score;
+    public Scene scene;
 
     /**
      * Initialize what will be displayed and how it will be updated.
      */
     @Override
     public void start(Stage stage) {
-        myScene = setupGame(SIZE, SIZE, BACKGROUND, stage);
+        myScene = setupGame(SIZE, SIZE, stage);
         stage.setScene(myScene);
         stage.setTitle(TITLE);
         stage.show();
@@ -84,21 +93,32 @@ public class Main extends Application {
     }
 
     // Create the game's "scene": what shapes will be in the game and their starting properties
-    private Scene setupGame(int width, int height, Paint background, Stage stage) {
+    private Scene setupGame(int width, int height, Stage stage) {
         // create one top level collection to organize the things in the scene
         root = new Group();
+        // https://www.vectorstock.com/royalty-free-vector/abstract-perspective-background-with-white-grey-vector-12558883
+        var background_image = new ImageView(new Image(this.getClass().getClassLoader().getResourceAsStream(GAME_BACKGROUND)));
+        background_image.setFitHeight(SIZE);
+        background_image.setFitWidth(SIZE);
+        root.getChildren().add(background_image);
         // create a place to see the shapes
-        var scene = new Scene(root, width, height, background);
+        scene = new Scene(root, width, height);
         // add bouncer and paddle
         var ball_image = new Image(this.getClass().getClassLoader().getResourceAsStream(BOUNCER_IMAGE));
         // change speed
         switch (current_level) {
             case 1:
-                myBouncer = new Bouncer(ball_image, -150, bouncer_scale,this);
+                myBouncer = new Bouncer(ball_image, -150, bouncer_scale, this);
             case 2:
-                myBouncer = new Bouncer(ball_image, -200, bouncer_scale,this);
+                myBouncer = new Bouncer(ball_image, -200, bouncer_scale, this);
             case 3:
-                myBouncer = new Bouncer(ball_image, -300, bouncer_scale,this);
+                myBouncer = new Bouncer(ball_image, -300, bouncer_scale, this);
+            case 4:
+                myBouncer = new Bouncer(ball_image, -150, bouncer_scale, this);
+            case 5:
+                myBouncer = new Bouncer(ball_image, -200, bouncer_scale, this);
+            case 6:
+                myBouncer = new Bouncer(ball_image, -300, bouncer_scale, this);
         }
 
         myPaddle = new Rectangle(width / 2 - PADDLE_WIDTH, height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -119,6 +139,15 @@ public class Main extends Application {
             case 3:
                 input = new Scanner(this.getClass().getClassLoader().getResourceAsStream(LEVEL_3));
                 break;
+            case 4:
+                input = new Scanner(this.getClass().getClassLoader().getResourceAsStream(LEVEL_1));
+                break;
+            case 5:
+                input = new Scanner(this.getClass().getClassLoader().getResourceAsStream(LEVEL_2));
+                break;
+            case 6:
+                input = new Scanner(this.getClass().getClassLoader().getResourceAsStream(LEVEL_3));
+                break;
         }
         int count = 0;
         bricks = new ArrayList<>();
@@ -128,7 +157,7 @@ public class Main extends Application {
             if (temp != 1) {
                 Rectangle b = new Rectangle(
                         20 + count % BRICKS_COLUMN * 80,
-                        40 + Math.round(count / BRICKS_COLUMN) * 90,
+                        40 + Math.round(count / BRICKS_COLUMN) * 70,
                         80,
                         40
                 );
@@ -153,16 +182,16 @@ public class Main extends Application {
         input.reset();
         while (input.hasNext()) {
             int temp1 = input.nextInt();
-            System.out.print(temp1);
             if (temp1 != 1) {
                 BRICKS_NUM++;
             }
         }
 
-
         // set up power-ups
-        extraBallPower = new ArrayList<ExtraBallPower>();
-        sizePower = new ArrayList<SizePower>();
+        extraBallPower = new ArrayList<>();
+        sizePower = new ArrayList<>();
+        pointsPower = new ArrayList<>();
+
 
         // add captions on the top
         level = new Text() {{
@@ -195,23 +224,21 @@ public class Main extends Application {
         return scene;
     }
 
-    // Change properties of shapes to animate them
-    // Note, there are more sophisticated ways to animate shapes, but these simple ways work fine to start.
     private void step(double elapsedTime, Stage stage) {
         level.setText("Level: " + current_level + "/" + GAME_LEVEL);
         score.setText("Score: " + current_score);
         life.setText("Life: " + current_life + "/" + GAME_LIFE);
 
-        // win text
-        if (bricks.size() == 0 && current_level == 3 && current_life > 0) {
+        if (isWon) {
             Text win = new Text() {{
                 setTranslateX(SIZE / 8);
                 setTranslateY(SIZE / 2);
                 setFill(Color.BLACK);
                 setFont(Font.font(110));
-                setText("YOU WON!");
+                setText("YOU WON!\n" + "Score: " + current_score);
             }};
             root.getChildren().add(win);
+            animation.stop();
         }
 
         // lose text
@@ -224,6 +251,7 @@ public class Main extends Application {
                 setText("YOU LOSE!");
             }};
             root.getChildren().add(fail);
+            animation.stop();
         }
 
         // make the bouncers move
@@ -234,7 +262,24 @@ public class Main extends Application {
         // deal with bouncing off the paddle
         if (myBouncer.getView().getBoundsInLocal().intersects(myPaddle.getBoundsInLocal())) {
             setRecentlyHit(true);
-            myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+            // bounce off left part
+            if (bounceWeird && myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth() / 4) {
+                myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+            } else if (myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth() * 3 / 4) {
+                myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+            } else if (bounceWeird && myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth()) {
+                myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+            } else if (!bounceWeird && myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth()) {
+                myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+            }
+        }
+        // move paddle across screen
+        if (myPaddleX < 0) {
+            myPaddle.setX(SIZE - myPaddle.getBoundsInLocal().getWidth());
+            myPaddleX = myPaddle.getX();
+        } else if (myPaddleX >= SIZE) {
+            myPaddle.setX(0);
+            myPaddleX = myPaddle.getX();
         }
 
         // if it's within the time limit, then decrease timelimit
@@ -262,10 +307,8 @@ public class Main extends Application {
                 extraBallPower.get(i).hitPaddle(myPaddleX, SIZE);
                 // after hit the paddle, set to true
                 if (!thereIsExtraPower && extraBallPower.get(i).hit == true) {
-                    System.out.println(i);
                     thereIsExtraPower = true;
                     extraBallPower.get(i).hit = false;
-                    System.out.println("restting boolean");
                 }
             }
         }
@@ -276,18 +319,36 @@ public class Main extends Application {
                 sizePower.get(i).move(elapsedTime);
                 sizePower.get(i).hitPaddle(myPaddleX, SIZE);
                 if (!thereIsSizePower && sizePower.get(i).hit == true) {
-                        thereIsSizePower = true;
+                    thereIsSizePower = true;
                 }
-                if (! thereIsSizePower) {
+                if (!thereIsSizePower) {
                     myPaddle.setWidth(PADDLE_WIDTH);
                     myPaddle.setHeight(PADDLE_HEIGHT);
                 }
             }
         }
 
+        // move pointspower power-ups and check for collisions
+        for (int i = 0; i < pointsPower.size(); i++) {
+            if (pointsPower.get(i) != null) {
+                pointsPower.get(i).move(elapsedTime);
+                pointsPower.get(i).hitPaddle(myPaddleX, SIZE);
+            }
+        }
+
+        int count = 0;
         // deal with bouncing off the bricks
         for (int i = 0; i < bricks.size(); i++) {
+            // win text
+            if (bricks.get(i).getX() == 0 && current_level == GAME_LEVEL) {
+                count++;
+            }
+            if (count == bricks.size()) isWon = true;
+
             if (myBouncer.getView().getBoundsInLocal().intersects(bricks.get(i).getBoundsInLocal())) {
+                if (current_level < 4) {
+                    scene.setOnKeyPressed(e -> handleKeyInput(e.getCode(), stage));
+                }
                 double brickX = bricks.get(i).getBoundsInLocal().getMaxX() / 2 + bricks.get(i).getBoundsInLocal().getMinX() / 2;
                 double prob = Math.random();
                 switch (bricksLife.get(i) + 1) {
@@ -310,6 +371,7 @@ public class Main extends Application {
                         bricks.get(i).setFill(Color.BLUE);
                         break;
                 }
+                // drop power-ups when the brick is about to disappear
                 if (bricksLife.get(i) == 0) {
                     if (prob < 0.1) {
                         // sizepower power-ups
@@ -322,6 +384,10 @@ public class Main extends Application {
                         var extraPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(EXTRAPOWER_IMAGE));
                         extraBallPower.add(new ExtraBallPower(extraPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(extraBallPower.get(extraBallPower.size() - 1).getView());
+                    } else if (prob < 0.3) {
+                        var extraPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(POINTS_IMAGE));
+                        pointsPower.add(new PointsPower(extraPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
+                        root.getChildren().add(pointsPower.get(pointsPower.size() - 1).getView());
                     }
                     // eliminate the rectangle when no life
                     bricks.get(i).setWidth(0);
@@ -336,12 +402,10 @@ public class Main extends Application {
                     if (myBouncer.myBouncerY + myBouncer.myBouncerHeight <= bricks.get(i).getBoundsInLocal().getMinY()
                             || myBouncer.myBouncerY >= bricks.get(i).getBoundsInLocal().getMaxY()) {
                         myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
-                        System.out.println("reversed Y");
                     }
                     // else, reverse X
                     else {
                         myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), myBouncer.myVelocity.getY());
-                        System.out.println("reversed X");
                     }
                 }
             }
@@ -356,39 +420,52 @@ public class Main extends Application {
             myPaddleX = myPaddle.getX();
         } else if (code == KeyCode.RIGHT) {
             myPaddle.setX(myPaddle.getX() + MOVER_SPEED);
+            myPaddleX = myPaddle.getX();
         } else if (code == KeyCode.SPACE) {
-            setLaunch(1);
+            setLaunch(launch);
         } else if (code == KeyCode.L) {
             current_life++;
-        } else if (code == KeyCode.E){
+        } else if (code == KeyCode.N) {
+            bounceWeird = !bounceWeird;
+        } else if (code == KeyCode.E) {
             myBouncer.getView().setScaleX(bouncer_scale * 1.5);
             myBouncer.getView().setScaleY(bouncer_scale * 1.5);
-        }else if (code == KeyCode.R) {
+        } else if (code == KeyCode.R) {
             animation.stop();
             start(stage);
-        }else if (code == KeyCode.DIGIT1) {
+        } else if (code == KeyCode.DIGIT1) {
             current_level = 1;
-            launch = 0;
             animation.stop();
             start(stage);
         } else if (code == KeyCode.DIGIT2) {
             current_level = 2;
-            launch = 0;
             animation.stop();
             start(stage);
         } else if (code == KeyCode.DIGIT3) {
             current_level = 3;
-            launch = 0;
+            animation.stop();
+            start(stage);
+        } else if (code == KeyCode.DIGIT4) {
+            current_level = 4;
+            animation.stop();
+            start(stage);
+        } else if (code == KeyCode.DIGIT5) {
+            current_level = 5;
+            animation.stop();
+            start(stage);
+        } else if (code == KeyCode.DIGIT6) {
+            current_level = 6;
             animation.stop();
             start(stage);
         }
+
     }
 
     public void setRecentlyHit(boolean recentlyHit) {
         this.recentlyHit = recentlyHit;
     }
 
-    public void setLaunch(int launch) {
-        this.launch = launch;
+    public void setLaunch(boolean launch) {
+        this.launch = !launch;
     }
 }
