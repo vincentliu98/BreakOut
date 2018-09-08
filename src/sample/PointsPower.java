@@ -1,53 +1,21 @@
 package sample;
 
-import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.Node;
 
-public class PointsPower {
-    private static final int POWER_SPEED = 100;
-
-    private double myPowerY;
-    private ImageView myPower;
-    private Point2D myVelocity;
-    public boolean hit = false;
-
-    private Main context;
+public class PointsPower extends PowerUp {
 
     // constructor
     // x and y are the width and height of the canvas
     public PointsPower(Image image, double x, double y, Main context) {
-        myPower = new ImageView(image);
-        // make sure it stays within the bounds
-        this.context = context;
-        myPower.setX(x);
-        myPower.setY(y);
-
-        // turn speed into velocity that can be updated on bounces
-        myVelocity = new Point2D(POWER_SPEED, POWER_SPEED);
+        super(image, x, y, context);
     }
 
-    // make the ball move
-    public void move(double elapsedTime) {
-        myPowerY = myPower.getY() + myVelocity.getY() * elapsedTime;
-        myPower.setY(myPowerY);
-    }
-
+    @Override
     // hit paddle, add score
     public void hitPaddle(double myPaddleX, int screenWidth) {
-        if (myPowerY + myPower.getBoundsInParent().getHeight() >= screenWidth - context.PADDLE_HEIGHT && myPaddleX <= myPower.getX() && myPaddleX + context.PADDLE_WIDTH >= myPower.getX()) {
-            myPower.setY(-100);
-            myPower.setX(-100);
-            context.current_score += 500;
-            hit = true;
-        }
+        super.hitPaddle(myPaddleX, screenWidth);
+        context.current_score += 500;
     }
 
-    // Returns internal view of bouncer to interact with other JavaFX methods.
-    public Node getView() {
-        return myPower;
-    }
 
 }
-

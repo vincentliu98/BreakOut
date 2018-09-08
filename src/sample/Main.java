@@ -32,6 +32,25 @@ public class Main extends Application {
     public static final int BRICKS_COLUMN = 8;
     public static final int GAME_LIFE = 3;
     public static final int GAME_LEVEL = 6;
+    public static final int LEVEL_1_SPEED = -150;
+    public static final int LEVEL_2_SPEED = -200;
+    public static final int LEVEL_3_SPEED = -300;
+    public static final int TOP_CAPTION_FONT = 15;
+    public static final int WIN_LOSE_FONT = 1100;
+    public static final double PADDLE_WIDTH = 80;
+    public static final double PADDLE_HEIGHT = 20;
+    public static final double TIMELIMIT = 8.0;
+    public static final int LEFT_MARGIN = 20;
+    public static final int RIGHT_MARGIN = 80;
+    public static final int TOP_MARGIN = 60;
+    public static final int BRICK_WIDTH = 80;
+    public static final int BRICK_HEIGHT = 40;
+    public static final int LIFE_3_SCORE = 40;
+    public static final int LIFE_2_SCORE = 50;
+    public static final int LIFE_1_SCORE = 60;
+    // the probability of dropping power-ups, less than 1/Number of power-ups
+    public static final double POWERUP_PROB = 0.1;
+    public static final double BALL_EXPAND = 1.5;
     public static final String TITLE = "Vincent's BreakOut";
     public static final String LEVEL_1 = "level_1.txt";
     public static final String LEVEL_2 = "level_2.txt";
@@ -43,37 +62,34 @@ public class Main extends Application {
     public static final String GAME_BACKGROUND = "game_background.jpg";
 
 
-
-    public static final double PADDLE_WIDTH = 80;
-    public static final double PADDLE_HEIGHT = 20;
-    public double power_timelimit = 8.0;
-    public double size_timelimit = 8.0;
-    public ArrayList<SizePower> sizePower;
-    public ArrayList<ExtraBallPower> extraBallPower;
-    public ArrayList<PointsPower> pointsPower;
-    public int current_life = 3;
-    public int current_level = 1;
-    public int current_score = 0;
-    public double myPaddleX;
-    public boolean isWon = false;
-    public boolean isNext = false;
-    public boolean bounceWeird = true;
-    public ArrayList<Rectangle> bricks;
-    public ArrayList<Integer> bricksLife;
-    public int BRICKS_NUM = 0;
     public boolean recentlyHit = false;
-    public boolean thereIsExtraPower = false;
-    public boolean thereIsSizePower = false;
-    private Scene myScene;
-    public Timeline animation;
-    public Rectangle myPaddle;
-    public Bouncer myBouncer;
+    public int bricks_num = 0;
+    public int current_life = 3;
+    private int current_level = 1;
+    public int current_score = 0;
+    private double power_timelimit = 8.0;
+    private double size_timelimit = 8.0;
+    private double myPaddleX;
+    private boolean isWon = false;
+    private boolean isNext = false;
+    private boolean bounceWeird = true;
+    private boolean thereIsExtraPower = false;
+    private boolean thereIsSizePower = false;
     public boolean launch = false;
-    public Group root;
-    public Text life;
-    public Text level;
-    public Text score;
-    public Scene scene;
+    private ArrayList<SizePower> sizePower;
+    private ArrayList<ExtraBallPower> extraBallPower;
+    private ArrayList<PointsPower> pointsPower;
+    private ArrayList<Rectangle> bricks;
+    private ArrayList<Integer> bricksLife;
+    private Scene myScene;
+    private Timeline animation;
+    public Rectangle myPaddle;
+    private Bouncer myBouncer;
+    private Group root;
+    private Text life;
+    private Text level;
+    private Text score;
+    private Scene scene;
 
     /**
      * Initialize what will be displayed and how it will be updated.
@@ -106,17 +122,17 @@ public class Main extends Application {
         // change speed
         switch (current_level) {
             case 1:
-                myBouncer = new Bouncer(ball_image, -150, bouncer_scale, this);
+                myBouncer = new Bouncer(ball_image, LEVEL_1_SPEED, bouncer_scale, this);
             case 2:
-                myBouncer = new Bouncer(ball_image, -200, bouncer_scale, this);
+                myBouncer = new Bouncer(ball_image, LEVEL_2_SPEED, bouncer_scale, this);
             case 3:
-                myBouncer = new Bouncer(ball_image, -300, bouncer_scale, this);
+                myBouncer = new Bouncer(ball_image, LEVEL_3_SPEED, bouncer_scale, this);
             case 4:
-                myBouncer = new Bouncer(ball_image, -150, bouncer_scale, this);
+                myBouncer = new Bouncer(ball_image, LEVEL_1_SPEED, bouncer_scale, this);
             case 5:
-                myBouncer = new Bouncer(ball_image, -200, bouncer_scale, this);
+                myBouncer = new Bouncer(ball_image, LEVEL_2_SPEED, bouncer_scale, this);
             case 6:
-                myBouncer = new Bouncer(ball_image, -300, bouncer_scale, this);
+                myBouncer = new Bouncer(ball_image, LEVEL_3_SPEED, bouncer_scale, this);
         }
 
         myPaddle = new Rectangle(width / 2 - PADDLE_WIDTH, height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -154,10 +170,10 @@ public class Main extends Application {
             int temp = input.nextInt();
             if (temp != 1) {
                 Rectangle b = new Rectangle(
-                        20 + count % BRICKS_COLUMN * 80,
-                        40 + Math.round(count / BRICKS_COLUMN) * 70,
-                        80,
-                        40
+                        LEFT_MARGIN + count % BRICKS_COLUMN * 80,
+                        TOP_MARGIN + Math.round(count / BRICKS_COLUMN) * 70,
+                        BRICK_WIDTH,
+                        BRICK_HEIGHT
                 );
                 switch (temp) {
                     case 2:
@@ -181,7 +197,7 @@ public class Main extends Application {
         while (input.hasNext()) {
             int temp1 = input.nextInt();
             if (temp1 != 1) {
-                BRICKS_NUM++;
+                bricks_num++;
             }
         }
 
@@ -193,26 +209,26 @@ public class Main extends Application {
 
         // add captions on the top
         level = new Text() {{
-            setTranslateX(10);
-            setTranslateY(20);
+            setTranslateX(LEFT_MARGIN / 2);
+            setTranslateY(LEFT_MARGIN);
             setFill(Color.BLACK);
-            setFont(Font.font(15));
+            setFont(Font.font(TOP_CAPTION_FONT));
             setText("Level: " + current_level + "/" + GAME_LEVEL);
         }};
 
         life = new Text() {{
-            setTranslateX(10 + width / 2);
-            setTranslateY(20);
+            setTranslateX(width / 2 - LEFT_MARGIN);
+            setTranslateY(LEFT_MARGIN);
             setFill(Color.BLACK);
-            setFont(Font.font(15));
+            setFont(Font.font(TOP_CAPTION_FONT));
             setText("Life: " + current_life + "/" + GAME_LIFE);
         }};
 
         score = new Text() {{
-            setTranslateX(width - 100);
-            setTranslateY(20);
+            setTranslateX(width - RIGHT_MARGIN);
+            setTranslateY(LEFT_MARGIN);
             setFill(Color.BLACK);
-            setFont(Font.font(15));
+            setFont(Font.font(TOP_CAPTION_FONT));
             setText("Score: " + current_score);
         }};
 
@@ -238,7 +254,7 @@ public class Main extends Application {
                 setTranslateX(SIZE / 8);
                 setTranslateY(SIZE / 2);
                 setFill(Color.BLACK);
-                setFont(Font.font(110));
+                setFont(Font.font(WIN_LOSE_FONT));
                 setText("YOU WON!\n" + "Score: " + current_score);
             }};
             root.getChildren().add(win);
@@ -251,7 +267,7 @@ public class Main extends Application {
                 setTranslateX(SIZE / 8);
                 setTranslateY(SIZE / 2);
                 setFill(Color.BLACK);
-                setFont(Font.font(110));
+                setFont(Font.font(WIN_LOSE_FONT));
                 setText("YOU LOSE!");
             }};
             root.getChildren().add(fail);
@@ -266,7 +282,7 @@ public class Main extends Application {
         // deal with bouncing off the paddle
         if (myBouncer.getView().getBoundsInLocal().intersects(myPaddle.getBoundsInLocal())) {
             setRecentlyHit(true);
-            // bounce off left part
+            // make the ball bounce normally in the middle, and bounce back to its original route
             if (bounceWeird && myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth() / 4) {
                 myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
             } else if (myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth() * 3 / 4) {
@@ -297,11 +313,11 @@ public class Main extends Application {
         // when the time limit runs out, invalidate power-up
         if (power_timelimit <= 0) {
             thereIsExtraPower = false;
-            power_timelimit = 8.0;
+            power_timelimit = TIMELIMIT;
         }
         if (size_timelimit <= 0) {
             thereIsSizePower = false;
-            size_timelimit = 8.0;
+            size_timelimit = TIMELIMIT;
         }
 
         // move extraballpower power-ups and check for collisions
@@ -349,8 +365,7 @@ public class Main extends Application {
             }
             if (count == bricks.size() && current_level != GAME_LEVEL) {
                 isNext = true;
-            }
-            else if (count == bricks.size() &&  current_level == GAME_LEVEL) isWon = true;
+            } else if (count == bricks.size() && current_level == GAME_LEVEL) isWon = true;
 
 
             if (myBouncer.getView().getBoundsInLocal().intersects(bricks.get(i).getBoundsInLocal())) {
@@ -361,13 +376,13 @@ public class Main extends Application {
                 double prob = Math.random();
                 switch (bricksLife.get(i) + 1) {
                     case 2:
-                        current_score += 60;
+                        current_score += LIFE_1_SCORE;
                         break;
                     case 3:
-                        current_score += 50;
+                        current_score += LIFE_2_SCORE;
                         break;
                     case 4:
-                        current_score += 40;
+                        current_score += LIFE_3_SCORE;
                         break;
                 }
                 bricksLife.set(i, bricksLife.get(i) - 1);
@@ -381,18 +396,18 @@ public class Main extends Application {
                 }
                 // drop power-ups when the brick is about to disappear
                 if (bricksLife.get(i) == 0) {
-                    if (prob < 0.1) {
+                    if (prob < POWERUP_PROB) {
                         // sizepower power-ups
                         var size_image = new Image(this.getClass().getClassLoader().getResourceAsStream(SIZE_IMAGE));
                         sizePower.add(new SizePower(size_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(sizePower.get(sizePower.size() - 1).getView());
                     }
                     // extra ball-power power-ups
-                    else if (prob < 0.2) {
+                    else if (prob < 2 * POWERUP_PROB) {
                         var extraPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(EXTRAPOWER_IMAGE));
                         extraBallPower.add(new ExtraBallPower(extraPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(extraBallPower.get(extraBallPower.size() - 1).getView());
-                    } else if (prob < 0.3) {
+                    } else if (prob < 3 * POWERUP_PROB) {
                         var extraPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(POINTS_IMAGE));
                         pointsPower.add(new PointsPower(extraPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(pointsPower.get(pointsPower.size() - 1).getView());
@@ -436,8 +451,8 @@ public class Main extends Application {
         } else if (code == KeyCode.N) {
             bounceWeird = !bounceWeird;
         } else if (code == KeyCode.E) {
-            myBouncer.getView().setScaleX(bouncer_scale * 1.5);
-            myBouncer.getView().setScaleY(bouncer_scale * 1.5);
+            myBouncer.getView().setScaleX(bouncer_scale * BALL_EXPAND);
+            myBouncer.getView().setScaleY(bouncer_scale * BALL_EXPAND);
         } else if (code == KeyCode.R) {
             animation.stop();
             start(stage);
