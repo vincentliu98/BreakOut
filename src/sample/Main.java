@@ -96,7 +96,6 @@ public class Main extends Application {
     private Scene setupGame(int width, int height, Stage stage) {
         // create one top level collection to organize the things in the scene
         root = new Group();
-        // https://www.vectorstock.com/royalty-free-vector/abstract-perspective-background-with-white-grey-vector-12558883
         var background_image = new ImageView(new Image(this.getClass().getClassLoader().getResourceAsStream(GAME_BACKGROUND)));
         background_image.setFitHeight(SIZE);
         background_image.setFitWidth(SIZE);

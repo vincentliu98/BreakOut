@@ -59,7 +59,7 @@ public class Welcome extends Application {
             setFont(Font.font(20));
             setText("Press Enter to play");
         }};
-        //https://www.breakoutedu.com/how-it-worksold/
+
         ImageView image = new ImageView(new Image(this.getClass().getClassLoader().getResourceAsStream("Welcome_background.jpg")));
         image.setX(0);
         image.setY(0);
