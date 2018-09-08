@@ -62,8 +62,8 @@ Extra credit: N/A
 
 ### Notes
 
-I have learned a lot from programming this BreakOut game. It was the first time that I spent so much time on constructing on project and it helped me gain better understanding of Object-Oriented Programming.
+Two of the three power-ups that I created in the game were different from my plan.
 
 ### Impressions
 
-I like this project. It is very challenging while rewarding.
+I like this project. It is very challenging while rewarding. I have learned a lot from programming this BreakOut game. It was the first time that I spent so much time on constructing on project and it helped me gain better understanding of Object-Oriented Programming.

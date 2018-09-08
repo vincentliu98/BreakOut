@@ -30,7 +30,7 @@ public class Main extends Application {
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
     public static final int MOVER_SPEED = 80;
     public static final int BRICKS_COLUMN = 8;
-    public static final int GAME_LIFE = 500;
+    public static final int GAME_LIFE = 3;
     public static final int GAME_LEVEL = 6;
     public static final String TITLE = "Vincent's BreakOut";
     public static final String LEVEL_1 = "level_1.txt";
@@ -51,7 +51,7 @@ public class Main extends Application {
     public ArrayList<SizePower> sizePower;
     public ArrayList<ExtraBallPower> extraBallPower;
     public ArrayList<PointsPower> pointsPower;
-    public int current_life = 500;
+    public int current_life = 3;
     public int current_level = 1;
     public int current_score = 0;
     public double myPaddleX;
