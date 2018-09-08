@@ -11,7 +11,7 @@ Start Date: 9.1.2018
 
 Finish Date: 9.7.2018
 
-Hours Spent: 19.5
+Hours Spent: 20.0
 
 ### Resources Used
 
@@ -56,6 +56,7 @@ Known Bugs:
 2. Sometimes the power-up does release the effect when hitting the paddle
 3. The bouncer will oscillate on the top of the screen if the player uses the cheat key to jump to a certain level
 4. The bouncer will oscillate on the edge if it is released on top left or top right of the screen
+5. The bouncer speed will strangely increase by itself when the level increases
 
 Extra credit: N/A
 

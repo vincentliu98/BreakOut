@@ -43,7 +43,7 @@ public class Bouncer {
             myBouncer.setY(myBouncerY);
         } else {
             myBouncer.setX(context.myPaddle.getX() + context.myPaddle.getBoundsInParent().getWidth() / 2 - myBouncerWidth / 2);
-            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight -5);
+            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight);
         }
     }
 
@@ -63,7 +63,7 @@ public class Bouncer {
             // reset the ball
             context.launch = false;
             myBouncer.setX(context.myPaddle.getX() + context.myPaddle.getBoundsInParent().getWidth() / 2 - myBouncerWidth / 2);
-            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight -5);
+            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight);
         }
     }
 

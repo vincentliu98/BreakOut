@@ -14,7 +14,6 @@ import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ public class Main extends Application {
     public static final String LEVEL_1 = "level_1.txt";
     public static final String LEVEL_2 = "level_2.txt";
     public static final String LEVEL_3 = "level_3.txt";
-    public static final Paint BACKGROUND = Color.WHITE;
     public static final String BOUNCER_IMAGE = "ball.gif";
     public static final String SIZE_IMAGE = "sizepower.gif";
     public static final String EXTRAPOWER_IMAGE = "extraballpower.gif";
@@ -58,6 +56,7 @@ public class Main extends Application {
     public int current_score = 0;
     public double myPaddleX;
     public boolean isWon = false;
+    public boolean isNext = false;
     public boolean bounceWeird = true;
     public ArrayList<Rectangle> bricks;
     public ArrayList<Integer> bricksLife;
@@ -224,6 +223,12 @@ public class Main extends Application {
     }
 
     private void step(double elapsedTime, Stage stage) {
+        if (isNext) {
+            current_level++;
+            isNext = false;
+            launch = false;
+            start(stage);
+        }
         level.setText("Level: " + current_level + "/" + GAME_LEVEL);
         score.setText("Score: " + current_score);
         life.setText("Life: " + current_life + "/" + GAME_LIFE);
@@ -339,10 +344,14 @@ public class Main extends Application {
         // deal with bouncing off the bricks
         for (int i = 0; i < bricks.size(); i++) {
             // win text
-            if (bricks.get(i).getX() == 0 && current_level == GAME_LEVEL) {
+            if (bricks.get(i).getX() == 0) {
                 count++;
             }
-            if (count == bricks.size()) isWon = true;
+            if (count == bricks.size() && current_level != GAME_LEVEL) {
+                isNext = true;
+            }
+            else if (count == bricks.size() &&  current_level == GAME_LEVEL) isWon = true;
+
 
             if (myBouncer.getView().getBoundsInLocal().intersects(bricks.get(i).getBoundsInLocal())) {
                 if (current_level < 4) {
