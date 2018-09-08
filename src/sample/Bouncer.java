@@ -11,7 +11,7 @@ public class Bouncer {
     public double myBouncerY;
     public double myBouncerWidth;
     public double myBouncerHeight;
-    private int BOUNCER_SPEED;
+    private final int BOUNCER_SPEED;
 
     public ImageView myBouncer;
     public Point2D myVelocity;

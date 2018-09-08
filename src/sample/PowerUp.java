@@ -7,7 +7,7 @@ import javafx.scene.image.ImageView;
 
 
 public class PowerUp {
-    protected static final int POWER_SPEED = 100;
+    protected final int POWER_SPEED = 100;
     public boolean hit = false;
     protected ImageView myPower;
     protected Point2D myVelocity;
