@@ -5,8 +5,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -30,18 +28,15 @@ public class Main extends Application {
     public final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
     public final int MOVER_SPEED = 80;
     public final int BRICKS_COLUMN = 8;
-    public final int GAME_LIFE = 3;
     public final int GAME_LEVEL = 6;
     public final int LEVEL_1_SPEED = -150;
     public final int LEVEL_2_SPEED = -200;
     public final int LEVEL_3_SPEED = -300;
-    public final int TOP_CAPTION_FONT = 15;
-    public final int WIN_LOSE_FONT = 1100;
+
     public final double PADDLE_WIDTH = 80;
     public final double PADDLE_HEIGHT = 20;
-    public final double TIMELIMIT = 8.0;
+    public final double TIME_LIMIT = 8.0;
     public final int LEFT_MARGIN = 20;
-    public final int RIGHT_MARGIN = 80;
     public final int TOP_MARGIN = 60;
     public final int BRICK_WIDTH = 80;
     public final int BRICK_HEIGHT = 40;
@@ -49,7 +44,7 @@ public class Main extends Application {
     public final int LIFE_2_SCORE = 50;
     public final int LIFE_1_SCORE = 60;
     // the probability of dropping power-ups, less than 1/Number of power-ups
-    public final double POWERUP_PROB = 0.1;
+    public final double POWER_UP_PROB = 0.1;
     public final double BALL_EXPAND = 1.5;
     public final String TITLE = "Vincent's BreakOut";
     public final String LEVEL_1 = "level_1.txt";
@@ -57,39 +52,37 @@ public class Main extends Application {
     public final String LEVEL_3 = "level_3.txt";
     public final String BOUNCER_IMAGE = "ball.gif";
     public final String SIZE_IMAGE = "sizepower.gif";
-    public final String EXTRAPOWER_IMAGE = "extraballpower.gif";
+    public final String EXTRA_POWER_IMAGE = "extraballpower.gif";
     public final String POINTS_IMAGE = "pointspower.gif";
     public final String GAME_BACKGROUND = "game_background.jpg";
 
 
-    public boolean recentlyHit = false;
-    public int bricks_num = 0;
-    public int current_life = 3;
+    private int bricks_num = 0;
+    private int current_life = 3;
     private int current_level = 1;
-    public int current_score = 0;
-    private double power_timelimit = 8.0;
-    private double size_timelimit = 8.0;
+    private int current_score = 0;
+    private double power_time_limit = 8.0;
+    private double size_time_limit = 8.0;
     private double myPaddleX;
-    private boolean isWon = false;
     private boolean isNext = false;
     private boolean bounceWeird = true;
     private boolean thereIsExtraPower = false;
     private boolean thereIsSizePower = false;
-    public boolean launch = false;
+    private boolean launch = false;
+    private boolean recentlyHit = false;
+    private boolean isWon = false;
     private ArrayList<SizePower> sizePower;
     private ArrayList<ExtraBallPower> extraBallPower;
     private ArrayList<PointsPower> pointsPower;
     private ArrayList<Rectangle> bricks;
     private ArrayList<Integer> bricksLife;
     private Scene myScene;
+    private Scene scene;
     private Timeline animation;
     public Rectangle myPaddle;
     private Bouncer myBouncer;
+    private Texts myText;
     private Group root;
-    private Text life;
-    private Text level;
-    private Text score;
-    private Scene scene;
 
     /**
      * Initialize what will be displayed and how it will be updated.
@@ -197,7 +190,7 @@ public class Main extends Application {
         while (input.hasNext()) {
             int temp1 = input.nextInt();
             if (temp1 != 1) {
-                bricks_num++;
+                setBricks_num(bricks_num + 1);
             }
         }
 
@@ -206,72 +199,24 @@ public class Main extends Application {
         sizePower = new ArrayList<>();
         pointsPower = new ArrayList<>();
 
-
-        // add captions on the top
-        level = new Text() {{
-            setTranslateX(LEFT_MARGIN / 2);
-            setTranslateY(LEFT_MARGIN);
-            setFill(Color.BLACK);
-            setFont(Font.font(TOP_CAPTION_FONT));
-            setText("Level: " + current_level + "/" + GAME_LEVEL);
-        }};
-
-        life = new Text() {{
-            setTranslateX(width / 2 - LEFT_MARGIN);
-            setTranslateY(LEFT_MARGIN);
-            setFill(Color.BLACK);
-            setFont(Font.font(TOP_CAPTION_FONT));
-            setText("Life: " + current_life + "/" + GAME_LIFE);
-        }};
-
-        score = new Text() {{
-            setTranslateX(width - RIGHT_MARGIN);
-            setTranslateY(LEFT_MARGIN);
-            setFill(Color.BLACK);
-            setFont(Font.font(TOP_CAPTION_FONT));
-            setText("Score: " + current_score);
-        }};
-
-        root.getChildren().addAll(life, level, score);
+        // initialize texts
+        myText = new Texts(this);
+        myText.initialize();
 
         scene.setOnKeyPressed(e -> handleKeyInput(e.getCode(), stage));
         return scene;
     }
 
     private void step(double elapsedTime, Stage stage) {
+        // update texts and display final text when the user wins or loses
+        myText.updateTexts();
+        myText.displayWinLose();
+
         if (isNext) {
             current_level++;
             isNext = false;
             launch = false;
             start(stage);
-        }
-        level.setText("Level: " + current_level + "/" + GAME_LEVEL);
-        score.setText("Score: " + current_score);
-        life.setText("Life: " + current_life + "/" + GAME_LIFE);
-
-        if (isWon) {
-            Text win = new Text() {{
-                setTranslateX(SIZE / 8);
-                setTranslateY(SIZE / 2);
-                setFill(Color.BLACK);
-                setFont(Font.font(WIN_LOSE_FONT));
-                setText("YOU WON!\n" + "Score: " + current_score);
-            }};
-            root.getChildren().add(win);
-            animation.stop();
-        }
-
-        // lose text
-        if (current_life <= 0) {
-            Text fail = new Text() {{
-                setTranslateX(SIZE / 8);
-                setTranslateY(SIZE / 2);
-                setFill(Color.BLACK);
-                setFont(Font.font(WIN_LOSE_FONT));
-                setText("YOU LOSE!");
-            }};
-            root.getChildren().add(fail);
-            animation.stop();
         }
 
         // make the bouncers move
@@ -281,16 +226,16 @@ public class Main extends Application {
 
         // deal with bouncing off the paddle
         if (myBouncer.getView().getBoundsInLocal().intersects(myPaddle.getBoundsInLocal())) {
-            setRecentlyHit(true);
+            setRecentlyHit(recentlyHit);
             // make the ball bounce normally in the middle, and bounce back to its original route
             if (bounceWeird && myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth() / 4) {
-                myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+                myBouncer.setMyVelocity(new Point2D(-myBouncer.getMyVelocity().getX(), -myBouncer.getMyVelocity().getY()));
             } else if (myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth() * 3 / 4) {
-                myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+                myBouncer.setMyVelocity(new Point2D(myBouncer.getMyVelocity().getX(), -myBouncer.getMyVelocity().getY()));
             } else if (bounceWeird && myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth()) {
-                myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+                myBouncer.setMyVelocity(new Point2D(-myBouncer.getMyVelocity().getX(), -myBouncer.getMyVelocity().getY()));
             } else if (!bounceWeird && myBouncer.getView().getBoundsInLocal().getMinX() < myPaddle.getBoundsInLocal().getMinX() + myPaddle.getBoundsInLocal().getWidth()) {
-                myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+                myBouncer.setMyVelocity(new Point2D(-myBouncer.getMyVelocity().getX(), -myBouncer.getMyVelocity().getY()));
             }
         }
         // move paddle across screen
@@ -304,20 +249,20 @@ public class Main extends Application {
 
         // if it's within the time limit, then decrease timelimit
         if (thereIsExtraPower) {
-            power_timelimit -= SECOND_DELAY;
+            power_time_limit -= SECOND_DELAY;
         }
         if (thereIsSizePower) {
-            size_timelimit -= SECOND_DELAY;
+            size_time_limit -= SECOND_DELAY;
         }
 
         // when the time limit runs out, invalidate power-up
-        if (power_timelimit <= 0) {
+        if (power_time_limit <= 0) {
             thereIsExtraPower = false;
-            power_timelimit = TIMELIMIT;
+            power_time_limit = TIME_LIMIT;
         }
-        if (size_timelimit <= 0) {
+        if (size_time_limit <= 0) {
             thereIsSizePower = false;
-            size_timelimit = TIMELIMIT;
+            size_time_limit = TIME_LIMIT;
         }
 
         // move extraballpower power-ups and check for collisions
@@ -396,18 +341,18 @@ public class Main extends Application {
                 }
                 // drop power-ups when the brick is about to disappear
                 if (bricksLife.get(i) == 0) {
-                    if (prob < POWERUP_PROB) {
+                    if (prob < POWER_UP_PROB) {
                         // sizepower power-ups
                         var size_image = new Image(this.getClass().getClassLoader().getResourceAsStream(SIZE_IMAGE));
                         sizePower.add(new SizePower(size_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(sizePower.get(sizePower.size() - 1).getView());
                     }
                     // extra ball-power power-ups
-                    else if (prob < 2 * POWERUP_PROB) {
-                        var extraPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(EXTRAPOWER_IMAGE));
+                    else if (prob < 2 * POWER_UP_PROB) {
+                        var extraPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(EXTRA_POWER_IMAGE));
                         extraBallPower.add(new ExtraBallPower(extraPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(extraBallPower.get(extraBallPower.size() - 1).getView());
-                    } else if (prob < 3 * POWERUP_PROB) {
+                    } else if (prob < 3 * POWER_UP_PROB) {
                         var extraPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(POINTS_IMAGE));
                         pointsPower.add(new PointsPower(extraPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(pointsPower.get(pointsPower.size() - 1).getView());
@@ -424,11 +369,11 @@ public class Main extends Application {
                 if (!thereIsExtraPower) {
                     if (myBouncer.myBouncerY + myBouncer.myBouncerHeight <= bricks.get(i).getBoundsInLocal().getMinY()
                             || myBouncer.myBouncerY >= bricks.get(i).getBoundsInLocal().getMaxY()) {
-                        myBouncer.myVelocity = new Point2D(myBouncer.myVelocity.getX(), -myBouncer.myVelocity.getY());
+                        myBouncer.setMyVelocity(new Point2D(myBouncer.getMyVelocity().getX(), -myBouncer.getMyVelocity().getY()));
                     }
                     // else, reverse X
                     else {
-                        myBouncer.myVelocity = new Point2D(-myBouncer.myVelocity.getX(), myBouncer.myVelocity.getY());
+                        myBouncer.setMyVelocity(new Point2D(-myBouncer.getMyVelocity().getX(), myBouncer.getMyVelocity().getY()));
                     }
                 }
             }
@@ -485,10 +430,51 @@ public class Main extends Application {
     }
 
     public void setRecentlyHit(boolean recentlyHit) {
-        this.recentlyHit = recentlyHit;
+        this.recentlyHit = !recentlyHit;
+    }
+
+    public boolean getLaunch() {
+        return launch;
     }
 
     public void setLaunch(boolean launch) {
         this.launch = !launch;
     }
+
+    public void setBricks_num(int bricks_num) {
+        this.bricks_num = bricks_num;
+    }
+
+    public int getCurrent_life() {
+        return current_life;
+    }
+
+    public void setCurrent_life(int current_life) {
+        this.current_life = current_life;
+    }
+
+    public int getCurrent_score() {
+        return current_score;
+    }
+
+    public void setCurrent_score(int current_score) {
+        this.current_score = current_score;
+    }
+
+    public int getCurrent_level() {
+        return current_level;
+    }
+
+    public Group getRoot() {
+        return root;
+    }
+
+    public Timeline getAnimation() {
+        return animation;
+    }
+
+    public boolean getIsWon () {
+        return isWon;
+    }
+
 }

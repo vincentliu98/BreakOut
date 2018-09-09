@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 
 public class PowerUp {
     protected final int POWER_SPEED = 100;
+    protected final int DISAPPEAR_POSITION = -100;
     public boolean hit = false;
     protected ImageView myPower;
     protected Point2D myVelocity;
@@ -32,8 +33,8 @@ public class PowerUp {
 
     public void hitPaddle(double myPaddleX, int screenWidth) {
         if (myPowerY + myPower.getBoundsInParent().getHeight() >= screenWidth - context.PADDLE_HEIGHT && myPaddleX <= myPower.getX() && myPaddleX + context.PADDLE_WIDTH >= myPower.getX()) {
-            myPower.setY(-100);
-            myPower.setX(-100);
+            myPower.setY(DISAPPEAR_POSITION);
+            myPower.setX(DISAPPEAR_POSITION);
             hit = true;
         }
     }

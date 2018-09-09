@@ -7,22 +7,22 @@ import javafx.scene.Node;
 import javafx.stage.Stage;
 
 public class Bouncer {
-    public double myBouncerX;
-    public double myBouncerY;
-    public double myBouncerWidth;
-    public double myBouncerHeight;
-    private final int BOUNCER_SPEED;
+    protected final int LOSE_ONE_LIFE = 1;
+    public static double myBouncerX;
+    public static double myBouncerY;
+    public static double myBouncerWidth;
+    public static double myBouncerHeight;
+    public static int BOUNCER_SPEED;
 
-    public ImageView myBouncer;
-    public Point2D myVelocity;
+    private ImageView myBouncer;
+    private Point2D myVelocity;
 
-    public Main context;
+    private Main context;
 
     // constructor
     // x and y are the width and height of the canvas
     public Bouncer(Image image, int speed, double scale, Main context) {
         this.context = context;
-
         myBouncer = new ImageView(image);
         myBouncerWidth = myBouncer.getBoundsInParent().getWidth();
         myBouncerHeight = myBouncer.getBoundsInParent().getHeight();
@@ -36,7 +36,7 @@ public class Bouncer {
 
     // make the ball move
     public void move(double elapsedTime) {
-        if (context.launch == true) {
+        if (context.getLaunch() == true) {
             myBouncerX = myBouncer.getX() + myVelocity.getX() * elapsedTime;
             myBouncerY = myBouncer.getY() + myVelocity.getY() * elapsedTime;
             myBouncer.setX(myBouncerX);
@@ -59,12 +59,20 @@ public class Bouncer {
             myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
             context.setRecentlyHit(false);
         } else if (myBouncer.getY() >= screenWidth) {
-            context.current_life--;
+            context.setCurrent_life(context.getCurrent_life() - LOSE_ONE_LIFE);
             // reset the ball
-            context.launch = false;
+            context.setLaunch(context.getLaunch());
             myBouncer.setX(context.myPaddle.getX() + context.myPaddle.getBoundsInParent().getWidth() / 2 - myBouncerWidth / 2);
-            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight);
+            myBouncer.setY(context.myPaddle.getY() - myBouncerHeight/2);
         }
+    }
+
+    public Point2D getMyVelocity() {
+        return myVelocity;
+    }
+
+    public void setMyVelocity(Point2D myVelocity) {
+        this.myVelocity = myVelocity;
     }
 
     // Returns internal view of bouncer to interact with other JavaFX methods.
