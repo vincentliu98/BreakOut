@@ -1,7 +1,7 @@
 game
 ====
 
-This project implements the game of Breakout.
+This project implements the game of Breakout, adapted from lab_bounce by Robert C. Duvall.
 
 Name: Vincent Liu
 
@@ -9,9 +9,9 @@ Name: Vincent Liu
 
 Start Date: 9.1.2018
 
-Finish Date: 9.7.2018
+Finish Date: 9.9.2018
 
-Hours Spent: 20.0
+Hours Spent: 23.0
 
 ### Resources Used
 
