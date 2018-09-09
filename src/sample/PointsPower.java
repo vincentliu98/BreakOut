@@ -15,8 +15,9 @@ public class PointsPower extends PowerUp {
     // hit paddle, add score
     public void hitPaddle(double myPaddleX, int screenWidth) {
         super.hitPaddle(myPaddleX, screenWidth);
+        if (hit == true) {
         context.setCurrent_score(context.getCurrent_score() + ADDITIONAL_SCORE);
+        }
     }
-
 
 }

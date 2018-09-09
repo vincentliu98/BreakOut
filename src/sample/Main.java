@@ -29,6 +29,7 @@ public class Main extends Application {
     public final int MOVER_SPEED = 80;
     public final int BRICKS_COLUMN = 8;
     public final int GAME_LEVEL = 6;
+    public final int GAME_LIFE = 3;
     public final int LEVEL_1_SPEED = -150;
     public final int LEVEL_2_SPEED = -200;
     public final int LEVEL_3_SPEED = -300;
@@ -68,6 +69,7 @@ public class Main extends Application {
     private boolean bounceWeird = true;
     private boolean thereIsExtraPower = false;
     private boolean thereIsSizePower = false;
+    private boolean thereIsPointsPower = false;
     private boolean launch = false;
     private boolean recentlyHit = false;
     private boolean isWon = false;
@@ -299,6 +301,9 @@ public class Main extends Application {
                 pointsPower.get(i).move(elapsedTime);
                 pointsPower.get(i).hitPaddle(myPaddleX, SIZE);
             }
+            if (pointsPower.get(i).hit) {
+                pointsPower.get(i).hit = false;
+            }
         }
 
         int count = 0;
@@ -353,8 +358,8 @@ public class Main extends Application {
                         extraBallPower.add(new ExtraBallPower(extraPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(extraBallPower.get(extraBallPower.size() - 1).getView());
                     } else if (prob < 3 * POWER_UP_PROB) {
-                        var extraPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(POINTS_IMAGE));
-                        pointsPower.add(new PointsPower(extraPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
+                        var pointsPower_image = new Image(this.getClass().getClassLoader().getResourceAsStream(POINTS_IMAGE));
+                        pointsPower.add(new PointsPower(pointsPower_image, brickX, bricks.get(i).getBoundsInParent().getMaxY(), this));
                         root.getChildren().add(pointsPower.get(pointsPower.size() - 1).getView());
                     }
                     // eliminate the rectangle when no life
@@ -473,7 +478,7 @@ public class Main extends Application {
         return animation;
     }
 
-    public boolean getIsWon () {
+    public boolean getIsWon() {
         return isWon;
     }
 

@@ -8,9 +8,8 @@ public class Texts {
     public final int SIZE = 700;
     public final int TOP_CAPTION_FONT = 15;
     public final int WIN_LOSE_FONT = 1100;
-    public final int RIGHT_MARGIN = 80;
+    public final int RIGHT_MARGIN = 100;
     public final int LEFT_MARGIN = 20;
-    public final int GAME_LEVEL = 6;
     private Text life;
     private Text level;
     private Text score;
@@ -24,7 +23,7 @@ public class Texts {
             setTranslateY(LEFT_MARGIN);
             setFill(Color.BLACK);
             setFont(Font.font(TOP_CAPTION_FONT));
-            setText("Level: " + context.getCurrent_level() + "/" + GAME_LEVEL);
+            setText("Level: " + context.getCurrent_level() + "/" + context.GAME_LEVEL);
         }};
 
         life = new Text() {{
@@ -32,7 +31,7 @@ public class Texts {
             setTranslateY(LEFT_MARGIN);
             setFill(Color.BLACK);
             setFont(Font.font(TOP_CAPTION_FONT));
-            setText("Life: " + context.getCurrent_life() + "/" + GAME_LEVEL);
+            setText("Life: " + context.getCurrent_life() + "/" + context.GAME_LIFE);
         }};
 
         score = new Text() {{
@@ -50,9 +49,9 @@ public class Texts {
     }
 
     public void updateTexts() {
-        level.setText("Level: " + context.getCurrent_level() + "/" + GAME_LEVEL);
+        level.setText("Level: " + context.getCurrent_level() + "/" + context.GAME_LEVEL);
         score.setText("Score: " + context.getCurrent_score());
-        life.setText("Life: " + context.getCurrent_life() + "/" + GAME_LEVEL);
+        life.setText("Life: " + context.getCurrent_life() + "/" + context.GAME_LIFE);
     }
 
     public void displayWinLose() {
