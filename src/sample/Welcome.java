@@ -20,7 +20,6 @@ public class Welcome extends Application {
 
     private Scene myScene;
 
-
     public void start(Stage stage) {
         myScene = setupGame(SIZE, SIZE, BACKGROUND);
 
@@ -71,7 +70,6 @@ public class Welcome extends Application {
         return scene;
 
     }
-
     public static void main(String[] args) {
         launch(args);
     }

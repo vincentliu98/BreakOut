@@ -67,6 +67,24 @@ public class Bouncer {
         }
     }
 
+    // bounce paddle
+    public void bouncePaddle() {
+        // deal with bouncing off the paddle
+        if (myBouncer.getBoundsInLocal().intersects(context.myPaddle.getBoundsInLocal())) {
+            context.setRecentlyHit(context.getRecentlyHit());
+            // make the ball bounce normally in the middle, and bounce back to its original route
+            if (context.getBounceWeird() && myBouncer.getBoundsInLocal().getMinX() < context.myPaddle.getBoundsInLocal().getMinX() + context.myPaddle.getBoundsInLocal().getWidth() / 4) {
+                myVelocity = new Point2D(-myVelocity.getX(), myVelocity.getY());
+            } else if (myBouncer.getBoundsInLocal().getMinX() < context.myPaddle.getBoundsInLocal().getMinX() + context.myPaddle.getBoundsInLocal().getWidth() * 3 / 4) {
+                myVelocity = new Point2D(myVelocity.getX(), -myVelocity.getY());
+            } else if (context.getBounceWeird() && myBouncer.getBoundsInLocal().getMinX() < context.myPaddle.getBoundsInLocal().getMinX() + context.myPaddle.getBoundsInLocal().getWidth()) {
+                myVelocity =new Point2D(-myVelocity.getX(), -myVelocity.getY());
+            } else if (!context.getBounceWeird() && myBouncer.getBoundsInLocal().getMinX() < context.myPaddle.getBoundsInLocal().getMinX() + context.myPaddle.getBoundsInLocal().getWidth()) {
+                myVelocity = new Point2D(-myVelocity.getX(), -myVelocity.getY());
+            }
+        }
+    }
+
     public Point2D getMyVelocity() {
         return myVelocity;
     }
